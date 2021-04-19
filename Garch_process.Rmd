@@ -11,6 +11,7 @@ library(rugarch)
 library(xts)
 library(PerformanceAnalytics)
 library(ggplot2)
+library(tidyr)
 ```
 
 ```{r model fitting}
@@ -153,7 +154,10 @@ gjrgarchVaR
 actual <- xts(as.data.frame(gjrgarchroll)$Realized, time(gjrgarchVaR))
 #calculate VaR Coverage
 VaR <- VaRplot(alpha=.05,actual=actual,VaR=gjrgarchVaR,title = (paste0("VaR with alpha = 5% for ",names[i]," Funds with VaR Coverage ",VaR)))
+m <- mean(actual<gjrgarchVaR)
+print(m)
 plotlist[[5+i]] <- VaR
+plotlist[[10+i]] <- m
 
 print(paste0(names[i]," Completed"))
 
@@ -164,13 +168,15 @@ print(paste0(names[i]," Completed"))
 for (i in 1:5){
   plot <- plotlist[[i]]
   plot(plot)
+  m <- plotlist[[i+10]]
+  print(m)
 }
 ```
 
 ```{r forecast}
 #------------------------Forecast------------------------
 # GARCH forecast
-
+sdf <- data.frame(row.names = 1:13)
 for (i in 1:5){
 gjrgarchfit <- ugarchfit(data=datalist[[i]], spec=models[[5+i]], out.sample = 13)
 gjrgarchforecast <- ugarchforecast(fitORspec=gjrgarchfit, n.ahead=13, n.roll=13)
@@ -183,11 +189,16 @@ plot1 <- plot(days,series,type = "l")
 plot1
 
 #plot sigmas
-sigmas <- gjrgarchforecast@forecast$sigmaFor[,14]
-plot2 <- plot(days,sigmas,type = "l")
-plot2
+sdf[,i] <- gjrgarchforecast@forecast$sigmaFor[,14]
+
 
 # VaR based on predicted returns
 VaR.predict <- as.numeric(quantile(gjrgarchforecast,probs=.05))
 }
+
+colnames(sdf) <- c("sigma_XLI","sigma_XLV","sigma_XLK","sigma_XLF","sigma_XLE")
+sdf$days <- as.numeric(rownames(sdf))
+sdf <- sdf %>% gather("Sector","Sigma",-days)
+ggplot(data = sdf,aes(x = days,y = Sigma,color = Sector))+
+  geom_line()
 ```
