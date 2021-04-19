@@ -23,13 +23,13 @@ xlk <- xts(data[,4], order.by=as.Date(data[,1], "%m/%d/%Y"))
 xlf <- xts(data[,5], order.by=as.Date(data[,1], "%m/%d/%Y"))
 xle <- xts(data[,6], order.by=as.Date(data[,1], "%m/%d/%Y"))
 datalist <- list("xli" = xli,"xlv" = xlv,"xlk" = xlk,"xlf" = xlf,"xle" = xle)
-arma <- list(c(6,4),c(6,5),c(0,4),c(4,6),c(6,6))
+arima <- list(c(4,5),c(6,5),c(0,4),c(3,5),c(6,6))
 names <- c("XLI","XLV","XLK","XLF","XLE")
 
 # GARCH spec
 
 for (i in 1:5){
-  order <- arma[[i]]
+  order <- arima[[i]]
   garchspec <- ugarchspec(mean.model = list(armaOrder = order),
                            variance.model = list(model = "sGARCH"),
                            distribution.model = "norm")  
@@ -60,7 +60,7 @@ t <- c("std","std","sstd","sstd","std")
 
 # refit GARCH spec with t distribution assumption
 for (i in 1:5){
-  order <- arma[[i]]
+  order <- arima[[i]]
   garchspec <- ugarchspec(mean.model = list(armaOrder = order),
                            variance.model = list(model = "sGARCH"),
                            distribution.model = t[i])  
