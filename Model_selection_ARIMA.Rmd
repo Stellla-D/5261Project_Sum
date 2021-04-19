@@ -150,7 +150,7 @@ par(op)
 
 ar(df$XLK_log-mean(df$XLK_log),method="mle",demean=FALSE)$aic # AR4
 
-auto.arima(df$XLK_log-mean(df$XLK_log),  d=0, max.order=12, max.p=6, max.q=6, ic="aic",seasonal = FALSE, stepwise = FALSE, approximation = FALSE,allowdrift = FALSE, allowmean = FALSE, trace=TRUE)
+auto.arima(df$XLK_log-mean(df$XLK_log),  d=0, max.order=12, max.p=6, max.q=6, ic="aic",seasonal = FALSE, stepwise = FALSE, approximation = FALSE,allowdrift = FALSE, allowmean = FALSE)
 ## best ARIMA(0,0,4)
 
 # Fitting ARMA model to mean-corrected data
@@ -191,7 +191,7 @@ par(op)
 
 ar(df$XLF_log-mean(df$XLF_log),method="mle",demean=FALSE)$aic # AR4
 
-auto.arima(df$XLF_log-mean(df$XLF_log),  d=0, max.order=10, max.p=3, max.q=6, ic="aic",seasonal = FALSE, stepwise = FALSE, approximation = FALSE,allowdrift = FALSE, allowmean = FALSE, trace=TRUE)
+auto.arima(df$XLF_log-mean(df$XLF_log),  d=0, max.order=10, max.p=3, max.q=6, ic="aic",seasonal = FALSE, stepwise = FALSE, approximation = FALSE,allowdrift = FALSE, allowmean = FALSE)
 
 ## best ARIMA(3,0,5)
 

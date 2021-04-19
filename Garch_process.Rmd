@@ -132,6 +132,7 @@ plotlist[[i]] <- plot
 
     
 gjrgarchVaR <- quantile(gjrgarchroll,probs=.05)
+
 actual <- xts(as.data.frame(gjrgarchroll)$Realized, time(gjrgarchVaR))
 #calculate VaR Coverage
 VaR <- VaRplot(alpha=.05,actual=actual,VaR=gjrgarchVaR,title = (paste0("VaR with alpha = 5% for ",names[i]," Funds with VaR Coverage ",VaR)))
