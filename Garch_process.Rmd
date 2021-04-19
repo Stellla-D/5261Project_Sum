@@ -59,6 +59,10 @@ models <- list("XLI_fit","XLV_fit","XLK_fit","XLF_fit","XLE_fit","XLI_spec","XLV
 t <- c("std","std","sstd","sstd","std")
 
 # refit GARCH spec with t distribution assumption
+sAIC <- c()
+gjrAIC <- c()
+sBIC <- c()
+gjrBIC <- c()
 for (i in 1:5){
   order <- arima[[i]]
   garchspec <- ugarchspec(mean.model = list(armaOrder = order),
@@ -75,7 +79,11 @@ for (i in 1:5){
   
 # ICs for choosing model
   sg_info <- infocriteria(garchfit)[1]
+  sAIC <- c(sAIC,sg_info)
+  sBIC <- c(sBIC,infocriteria(garchfit)[2])
   gjrg_info <- infocriteria(gjrgarchfit)[1] 
+  gjrAIC <- c(gjrAIC,gjrg_info)
+  gjrBIC <- c(gjrBIC,infocriteria(gjrgarchfit)[2])
   if (sg_info <= gjrg_info){
     iout<- newsimpact(garchfit) # a visualization for leverage effect (used in final report)
     plot(iout$zx,iout$zy,xlab=paste0(names[i]," prediction error with Standard Garch"),ylab="predicted variance")
@@ -87,7 +95,16 @@ for (i in 1:5){
     models[[i]] <- gjrgarchfit
     models[[5+i]] <- gjrgarchspec
   }
-  
+Infolist <- list("sAIC" = sAIC,"sBIC" = sBIC, "gjrAIC" = gjrAIC,"gjrBIC" = gjrBIC)  
+#look at standard AIC (in fund order)
+sAIC
+#look at standard BIC
+sBIC
+#look at gjr AIC
+gjrAIC
+#look at gjrBIC
+gjrBIC
+
 }
 ```
 
@@ -132,7 +149,7 @@ plotlist[[i]] <- plot
 
     
 gjrgarchVaR <- quantile(gjrgarchroll,probs=.05)
-
+gjrgarchVaR
 actual <- xts(as.data.frame(gjrgarchroll)$Realized, time(gjrgarchVaR))
 #calculate VaR Coverage
 VaR <- VaRplot(alpha=.05,actual=actual,VaR=gjrgarchVaR,title = (paste0("VaR with alpha = 5% for ",names[i]," Funds with VaR Coverage ",VaR)))
